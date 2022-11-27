@@ -10,4 +10,3 @@ Users are the main and most important data of this application. Anyone can regis
 
 # Links
 - [Create README](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops)
-- [Register / Login / Authentication](https://www.youtube.com/watch?v=v7q3pEK1EA0)

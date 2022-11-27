@@ -60,15 +60,14 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<List<User>>> Login(UserDto request)
         {
-            if (_context.Users.IsNullOrEmpty())
-                return BadRequest("Something went wrong with the database connection!");
-            var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstAsync();
-            if (user == null)
+            var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstOrDefaultAsync();
+            if (user == default)
                 return BadRequest("Bad username!");
             if (!_userService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 return Ok("Bad password!");
 
-            return Ok("Login successful! Id: " + user.Id);
+            string token = _userService.CreateToken(user.Name);
+            return Ok(token);
         }
     }
 }
