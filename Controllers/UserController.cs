@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PhotoGalleryAPI.Data;
 using PhotoGalleryAPI.Models;
+using PhotoGalleryAPI.Services;
+using System.Linq;
 
 namespace PhotoGalleryAPI.Controllers
 {
@@ -10,10 +13,12 @@ namespace PhotoGalleryAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly PhotoGalleryDbContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(PhotoGalleryDbContext context)
+        public UserController(PhotoGalleryDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         // GET: api/<UserController>
@@ -24,21 +29,46 @@ namespace PhotoGalleryAPI.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
-        // POST: api/<UserController>
-        [HttpPost]
+        // POST: api/<UserController>/Register
+        [HttpPost("Register")]
         [ProducesResponseType(typeof(User), 201)]
-        public async Task<ActionResult<List<User>>> Register(UserDto userDto)
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<List<User>>> Register(UserDto request)
         {
-            var user = new User()
+            foreach (var user in _context.Users)
+            {
+                if (user.Name.Equals(request.Name))
+                    return BadRequest("Username is taken!");
+            }
+            _userService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            var newUser = new User()
             {
                 Id = Guid.NewGuid(),
-                Name = userDto.Name,
-                Password = userDto.Password,
+                Name = request.Name,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
                 RegisteredAt = DateTime.UtcNow
             };
-            _context.Users.Add(user);
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
-            return Created("api/User/" + user.Id, user);
+            return Created("api/User/" + newUser.Id, newUser);
+        }
+
+        // POST: api/<UserController>/Login
+        [HttpPost("Login")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<List<User>>> Login(UserDto request)
+        {
+            if (_context.Users.IsNullOrEmpty())
+                return BadRequest("Something went wrong with the database connection!");
+            var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstAsync();
+            if (user == null)
+                return BadRequest("Bad username!");
+            if (!_userService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                return Ok("Bad password!");
+
+            return Ok("Login successful! Id: " + user.Id);
         }
     }
 }

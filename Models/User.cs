@@ -12,8 +12,9 @@ namespace PhotoGalleryAPI.Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        [StringLength(100)]
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
+
+        public byte[] PasswordSalt { get; set; }
 
         public DateTime RegisteredAt { get; set; }
     }
