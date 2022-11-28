@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PhotoGalleryAPI.Models
 {
-    public class User
+    public class Photo
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -12,12 +12,16 @@ namespace PhotoGalleryAPI.Models
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
-        public byte[] PasswordHash { get; set; }
+        [StringLength(100)]
+        public Gallery Gallery { get; set; }
 
-        public byte[] PasswordSalt { get; set; }
+        public Guid GalleryId { get; set; }
 
-        public List<Gallery> Galleries { get; set; } = new List<Gallery>();
+        [StringLength(250)]
+        public string Description { get; set; } = string.Empty;
 
-        public DateTime RegisteredAt { get; set; }
+        public byte[] ImageData { get; set; }
+
+        public DateTime UploadedAt { get; set; }
     }
 }
