@@ -30,6 +30,18 @@ namespace PhotoGalleryAPI.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
+        // GET: api/<UserController>
+        [HttpGet("{id}/Galleries")]
+        [ProducesResponseType(typeof(IEnumerable<Gallery>), 200)]
+        public async Task<ActionResult<List<Gallery>>> GetUserGalleries(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound("User not found!");
+
+            return Ok(user.Galleries);
+        }
+
         // POST: api/<UserController>/Register
         [HttpPost("Register")]
         [ProducesResponseType(typeof(User), 201)]
@@ -41,6 +53,7 @@ namespace PhotoGalleryAPI.Controllers
                 if (user.Name.Equals(request.Name))
                     return BadRequest("Username is taken!");
             }
+
             _userService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var newUser = new User()
             {
@@ -50,18 +63,20 @@ namespace PhotoGalleryAPI.Controllers
                 PasswordSalt = passwordSalt,
                 RegisteredAt = DateTime.UtcNow
             };
-            var rootGallery = new Gallery()
+
+            var newGallery = new Gallery()
             {
                 Id = Guid.NewGuid(),
-                Name = "#root",
+                Name = "First Album",
                 User = newUser,
                 UserId = newUser.Id,
+                ParentName = "root",
+                Description = $"First album of {newUser.Name}.",
                 CreatedAt = DateTime.UtcNow
             };
-            _context.Galleries.Add(rootGallery);
-            newUser.Galleries.Add(_context.Galleries.OrderBy(g => g.CreatedAt).Last());
-
+            newUser.Galleries.Add(newGallery);
             _context.Users.Add(newUser);
+            _context.Galleries.Add(newGallery);
             await _context.SaveChangesAsync();
             return Created("api/User/" + newUser.Id, newUser);
         }
@@ -76,7 +91,7 @@ namespace PhotoGalleryAPI.Controllers
             if (user == default)
                 return BadRequest("Bad username!");
             if (!_userService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                return Ok("Bad password!");
+                return BadRequest("Bad password!");
 
             string token = _userService.CreateToken(user.Name);
             return Ok(token);

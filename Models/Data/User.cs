@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PhotoGalleryAPI.Models.Data
 {
@@ -16,7 +17,7 @@ namespace PhotoGalleryAPI.Models.Data
 
         public byte[] PasswordSalt { get; set; }
 
-        public List<Gallery> Galleries { get; set; } = new List<Gallery>();
+        public virtual List<Gallery> Galleries { get; set; } = new List<Gallery>();
 
         public DateTime RegisteredAt { get; set; }
     }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace PhotoGalleryAPI.Models.Data
 {
@@ -12,7 +13,8 @@ namespace PhotoGalleryAPI.Models.Data
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
-        public User User { get; set; }
+        [JsonIgnore]
+        public virtual User User { get; set; }
 
         public Guid UserId { get; set; }
 
@@ -22,7 +24,7 @@ namespace PhotoGalleryAPI.Models.Data
         [StringLength(250)]
         public string Description { get; set; } = string.Empty;
 
-        public List<Photo> Photos { get; set; } = new List<Photo>();
+        public virtual List<Photo> Photos { get; set; } = new List<Photo>();
 
         public DateTime CreatedAt { get; set; }
     }
