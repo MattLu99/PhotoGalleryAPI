@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PhotoGalleryAPI.Data;
-using PhotoGalleryAPI.Models;
+using PhotoGalleryAPI.Models.Data;
+using PhotoGalleryAPI.Models.Dto;
 using PhotoGalleryAPI.Services;
 using System.Linq;
 
@@ -49,6 +50,17 @@ namespace PhotoGalleryAPI.Controllers
                 PasswordSalt = passwordSalt,
                 RegisteredAt = DateTime.UtcNow
             };
+            var rootGallery = new Gallery()
+            {
+                Id = Guid.NewGuid(),
+                Name = "#root",
+                User = newUser,
+                UserId = newUser.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Galleries.Add(rootGallery);
+            newUser.Galleries.Add(_context.Galleries.OrderBy(g => g.CreatedAt).Last());
+
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
             return Created("api/User/" + newUser.Id, newUser);

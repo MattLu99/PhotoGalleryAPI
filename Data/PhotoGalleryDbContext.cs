@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PhotoGalleryAPI.Models;
+using PhotoGalleryAPI.Models.Data;
 using static System.Collections.Specialized.BitVector32;
 
 namespace PhotoGalleryAPI.Data
@@ -9,6 +9,8 @@ namespace PhotoGalleryAPI.Data
         public PhotoGalleryDbContext(DbContextOptions<PhotoGalleryDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Gallery> Galleries { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

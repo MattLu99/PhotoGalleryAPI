@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace PhotoGalleryAPI.Models
+namespace PhotoGalleryAPI.Models.Data
 {
     public class User
     {
