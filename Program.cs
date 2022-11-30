@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(
         policy =>
         {
-            //TODO: Specify endpoint(s) based on configs
+            //Specify client side endpoint(s)S
             policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
         });
 });
