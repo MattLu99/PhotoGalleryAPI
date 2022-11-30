@@ -8,7 +8,7 @@ namespace PhotoGalleryAPI.Data
         public PhotoGalleryDbContext(DbContextOptions<PhotoGalleryDbContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Gallery> Galleries { get; set; }
+        public DbSet<Album> Albums { get; set; }
         public DbSet<Photo> Photos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -14,9 +14,9 @@ namespace PhotoGalleryAPI.Models.Data
         public string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public virtual Gallery Gallery { get; set; }
+        public virtual Album Album { get; set; }
 
-        public Guid GalleryId { get; set; }
+        public Guid AlbumId { get; set; }
 
         [StringLength(250)]
         public string Description { get; set; } = string.Empty;

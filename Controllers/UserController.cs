@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using PhotoGalleryAPI.Data;
 using PhotoGalleryAPI.Models.Data;
 using PhotoGalleryAPI.Models.Dto;
@@ -30,16 +29,52 @@ namespace PhotoGalleryAPI.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
-        // GET: api/<UserController>
-        [HttpGet("{id}/Galleries")]
-        [ProducesResponseType(typeof(IEnumerable<Gallery>), 200)]
-        public async Task<ActionResult<List<Gallery>>> GetUserGalleries(Guid id)
+        // GET: api/<UserController>/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(User), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<User>> GetUser(Guid userId)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(userId);
             if (user == null)
                 return NotFound("User not found!");
 
-            return Ok(user.Galleries);
+            return Ok(user);
+        }
+
+        // GET: api/<UserController>/5/Albums
+        [HttpGet("{id}/Albums")]
+        [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<List<Album>>> GetUserAlbums(Guid userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found!");
+
+            return Ok(user.Albums);
+        }
+
+        // GET: api/<UserController>/5/Photos
+        [HttpGet("{albumId}/Photos")]
+        [ProducesResponseType(typeof(IEnumerable<Photo>), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<List<Photo>>> GetUserAlbumPhotos(Guid userId, Guid albumId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found!");
+            var album = new Album();
+            Console.WriteLine(album);
+            foreach (var item in user.Albums)
+            {
+                if (item.Id.Equals(albumId))
+                    album = item;
+            }
+            if (album == null)
+                return NotFound("Album not found!");
+
+            return Ok(album.Photos);
         }
 
         // POST: api/<UserController>/Register
@@ -64,7 +99,7 @@ namespace PhotoGalleryAPI.Controllers
                 RegisteredAt = DateTime.UtcNow
             };
 
-            var newGallery = new Gallery()
+            var newGallery = new Album()
             {
                 Id = Guid.NewGuid(),
                 Name = "First Album",
@@ -74,9 +109,9 @@ namespace PhotoGalleryAPI.Controllers
                 Description = $"First album of {newUser.Name}.",
                 CreatedAt = DateTime.UtcNow
             };
-            newUser.Galleries.Add(newGallery);
+            newUser.Albums.Add(newGallery);
             _context.Users.Add(newUser);
-            _context.Galleries.Add(newGallery);
+            _context.Albums.Add(newGallery);
             await _context.SaveChangesAsync();
             return Created("api/User/" + newUser.Id, newUser);
         }
@@ -85,7 +120,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpPost("Login")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<List<User>>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(UserDto request)
         {
             var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstOrDefaultAsync();
             if (user == default)
@@ -93,6 +128,7 @@ namespace PhotoGalleryAPI.Controllers
             if (!_userService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 return BadRequest("Bad password!");
 
+            user.LastLoginAt = DateTime.UtcNow;
             string token = _userService.CreateToken(user.Name);
             return Ok(token);
         }

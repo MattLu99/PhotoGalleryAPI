@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace PhotoGalleryAPI.Models.Data
 {
-    public class Gallery
+    public class Album
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
