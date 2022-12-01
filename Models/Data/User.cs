@@ -17,6 +17,7 @@ namespace PhotoGalleryAPI.Models.Data
 
         public byte[] PasswordSalt { get; set; }
 
+        [JsonIgnore]
         public virtual List<Album> Albums { get; set; } = new List<Album>();
 
         public DateTime LastLoginAt { get; set; }

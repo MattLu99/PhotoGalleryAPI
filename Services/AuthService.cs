@@ -6,11 +6,11 @@ using System.Security.Cryptography;
 namespace PhotoGalleryAPI.Services
 {
 
-    public class UserService : IUserService
+    public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
         
-        public UserService(IConfiguration configuration)
+        public AuthService(IConfiguration configuration)
         {
             _configuration = configuration;
         }

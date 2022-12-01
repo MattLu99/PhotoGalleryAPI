@@ -25,7 +25,8 @@ namespace PhotoGalleryAPI.Models.Data
 
         public string TakenAtLocation { get; set; } = string.Empty;
 
-        public byte[]? ImageData { get; set; }
+        //Json format issue with .net support: maybe this should be array of bytes
+        public string ImageData { get; set; } = string.Empty;
 
         public DateTime UploadedAt { get; set; }
     }

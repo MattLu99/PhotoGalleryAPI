@@ -1,6 +1,4 @@
-﻿using PhotoGalleryAPI.Models.Data;
-
-namespace PhotoGalleryAPI.Models.Dto
+﻿namespace PhotoGalleryAPI.Models.Dto
 {
-    public record PhotoDto(string Name, Album Album, string Description, DateTime TakenAtTime, string TakenAtLocation, byte[] imageData);
+    public record PhotoDto(string Name, string Description, DateTime TakenAtTime, string TakenAtLocation, string ImageData);
 }
