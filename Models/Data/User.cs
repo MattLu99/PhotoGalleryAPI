@@ -8,7 +8,7 @@ namespace PhotoGalleryAPI.Models.Data
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;

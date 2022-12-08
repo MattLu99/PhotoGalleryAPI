@@ -24,9 +24,9 @@ namespace PhotoGalleryAPI.Migrations
 
             modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Album", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -46,8 +46,9 @@ namespace PhotoGalleryAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -58,12 +59,13 @@ namespace PhotoGalleryAPI.Migrations
 
             modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Photo", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("AlbumId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("AlbumId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -98,9 +100,9 @@ namespace PhotoGalleryAPI.Migrations
 
             modelBuilder.Entity("PhotoGalleryAPI.Models.Data.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastLoginAt")
                         .HasColumnType("datetime2");

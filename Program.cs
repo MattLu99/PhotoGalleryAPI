@@ -1,18 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using PhotoGalleryAPI.Data;
 using PhotoGalleryAPI.Services;
-using System.Text.Json.Serialization;
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
+    options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            //Specify client side endpoint(s)S
-            policy.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+            policy.WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
 });
 builder.Services.AddControllers();
@@ -40,6 +42,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 

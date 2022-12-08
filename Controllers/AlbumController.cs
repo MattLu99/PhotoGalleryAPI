@@ -30,7 +30,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Album), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Album>> GetAlbumById(Guid id)
+        public async Task<ActionResult<Album>> GetAlbumById(string id)
         {
             var album = await _context.Albums.FindAsync(id);
             if (album == null)
@@ -43,7 +43,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}/Photos")]
         [ProducesResponseType(typeof(IEnumerable<Photo>), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<List<Photo>>> GetUserAlbumPhotos(Guid id)
+        public async Task<ActionResult<List<Photo>>> GetUserAlbumPhotos(string id)
         {
             var album = await _context.Albums.FindAsync(id);
             if (album == null)
@@ -58,7 +58,7 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(typeof(Photo), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Photo>> NewPhoto(Guid id, PhotoDto request)
+        public async Task<ActionResult<Photo>> NewPhoto(String id, PhotoDto request)
         {
             var album = await _context.Albums.FindAsync(id);
             if (album == null)
@@ -71,7 +71,7 @@ namespace PhotoGalleryAPI.Controllers
 
             var newPhoto = new Photo()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name = request.Name,
                 Album = album,
                 AlbumId = id,
