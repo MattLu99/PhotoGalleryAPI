@@ -33,7 +33,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<User>> GetUserById(Guid id)
+        public async Task<ActionResult<User>> GetUserById(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -46,7 +46,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}/Albums")]
         [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<List<Album>>> GetUserAlbums(Guid id)
+        public async Task<ActionResult<List<Album>>> GetUserAlbums(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -70,7 +70,7 @@ namespace PhotoGalleryAPI.Controllers
             _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
             var newUser = new User()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name = request.Name,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
@@ -79,7 +79,7 @@ namespace PhotoGalleryAPI.Controllers
 
             var newAlbum = new Album()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name = "First Album",
                 User = newUser,
                 UserId = newUser.Id,
@@ -116,7 +116,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpPost("{id}/NewAlbum")]
         [ProducesResponseType(typeof(User), 201)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Album>> NewAlbum(Guid id, AlbumDto request)
+        public async Task<ActionResult<Album>> NewAlbum(string id, AlbumDto request)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -129,7 +129,7 @@ namespace PhotoGalleryAPI.Controllers
 
             var newAlbum = new Album()
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name = request.Name,
                 User = user,
                 UserId = id,
@@ -148,7 +148,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> DeleteUser(Guid id)
+        public async Task<ActionResult> DeleteUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)

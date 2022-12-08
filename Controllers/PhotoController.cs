@@ -28,7 +28,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Photo>), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<List<Photo>>> GetPhotoById(Guid id)
+        public async Task<ActionResult<List<Photo>>> GetPhotoById(string id)
         {
             var photo = await _context.Photos.FindAsync(id);
             if (photo == null)
@@ -44,7 +44,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> DeletePhoto(Guid id)
+        public async Task<ActionResult> DeletePhoto(string id)
         {
             var photo = await _context.Photos.FindAsync(id);
             if (photo == null)

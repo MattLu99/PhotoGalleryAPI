@@ -8,7 +8,7 @@ namespace PhotoGalleryAPI.Models.Data
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace PhotoGalleryAPI.Models.Data
         [JsonIgnore]
         public virtual User User { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         [StringLength(100)]
         public string ParentName { get; set; } = string.Empty;
@@ -24,6 +24,7 @@ namespace PhotoGalleryAPI.Models.Data
         [StringLength(250)]
         public string Description { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public virtual List<Photo> Photos { get; set; } = new List<Photo>();
 
         public DateTime CreatedAt { get; set; }

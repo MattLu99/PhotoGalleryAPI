@@ -8,7 +8,7 @@ namespace PhotoGalleryAPI.Models.Data
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace PhotoGalleryAPI.Models.Data
         [JsonIgnore]
         public virtual Album Album { get; set; }
 
-        public Guid AlbumId { get; set; }
+        public string AlbumId { get; set; }
 
         [StringLength(250)]
         public string Description { get; set; } = string.Empty;
@@ -25,8 +25,8 @@ namespace PhotoGalleryAPI.Models.Data
 
         public string TakenAtLocation { get; set; } = string.Empty;
 
-        //Json format issue with .net support: maybe this should be array of bytes
-        public string ImageData { get; set; } = string.Empty;
+        [MaxLength]
+        public string ImageData { get; set; }
 
         public DateTime UploadedAt { get; set; }
     }
