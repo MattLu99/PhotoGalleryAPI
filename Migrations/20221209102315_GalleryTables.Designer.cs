@@ -12,7 +12,7 @@ using PhotoGalleryAPI.Data;
 namespace PhotoGalleryAPI.Migrations
 {
     [DbContext(typeof(PhotoGalleryDbContext))]
-    [Migration("20221208052735_GalleryTables")]
+    [Migration("20221209102315_GalleryTables")]
     partial class GalleryTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,6 +29,10 @@ namespace PhotoGalleryAPI.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CoverImageId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

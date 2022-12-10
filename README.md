@@ -27,4 +27,4 @@ Photos are the representation of a single image with all its necessery data. In 
 - [Create README](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops)
 
 ## ToDo:
-- Fix: [make lazy loader not show in any Json output](https://stackoverflow.com/questions/25749509/how-can-i-tell-json-net-to-ignore-properties-in-a-3rd-party-object)
+- Minor fix: [make lazy loader not show in any Json output](https://stackoverflow.com/questions/25749509/how-can-i-tell-json-net-to-ignore-properties-in-a-3rd-party-object)
