@@ -27,6 +27,8 @@ namespace PhotoGalleryAPI.Models.Data
         [JsonIgnore]
         public virtual List<Photo> Photos { get; set; } = new List<Photo>();
 
+        public string CoverImageId { get; set; } = string.Empty;
+
         public DateTime CreatedAt { get; set; }
     }
 }

@@ -29,6 +29,14 @@ namespace PhotoGalleryAPI.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
+        // GET: api/<UserController>/Count
+        [HttpGet("Count")]
+        [ProducesResponseType(typeof(int), 200)]
+        public async Task<ActionResult<int>> Count()
+        {
+            return Ok(await _context.Users.CountAsync());
+        }
+
         // GET: api/<UserController>/5
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(User), 200)]
@@ -55,6 +63,19 @@ namespace PhotoGalleryAPI.Controllers
             return Ok(albums);
         }
 
+        // GET: api/<UserController>/5/AlbumsByLocation/#root
+        [HttpGet("{id}/AlbumsByLocation/{location}")]
+        [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<List<Album>>> GetAlbumsByLocation(string id, string location)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound("User not found!");
+            List<Album> albums = user.Albums.FindAll(a => a.ParentName.Equals(location));
+            return Ok(albums);
+        }
+
         // POST: api/<UserController>/Register
         [HttpPost("Register")]
         [ProducesResponseType(typeof(User), 201)]
@@ -74,6 +95,7 @@ namespace PhotoGalleryAPI.Controllers
                 Name = request.Name,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                LastLoginAt = DateTime.UtcNow,
                 RegisteredAt = DateTime.UtcNow
             };
 
@@ -83,7 +105,7 @@ namespace PhotoGalleryAPI.Controllers
                 Name = "First Album",
                 User = newUser,
                 UserId = newUser.Id,
-                ParentName = "root",
+                ParentName = "$root",
                 Description = $"First album of {newUser.Name}.",
                 CreatedAt = DateTime.UtcNow
             };
@@ -99,7 +121,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpPost("Login")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<User>> Login(UserDto request)
         {
             var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstOrDefaultAsync();
             if (user == default)
@@ -108,8 +130,8 @@ namespace PhotoGalleryAPI.Controllers
                 return BadRequest("Bad password!");
 
             user.LastLoginAt = DateTime.UtcNow;
-            string token = _authService.CreateToken(user.Name);
-            return Ok(token);
+            //string token = _authService.CreateToken(user.Name);
+            return Ok(user);
         }
 
         // POST: api/<UserController>/5/NewAlbum
@@ -121,6 +143,8 @@ namespace PhotoGalleryAPI.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null)
                 return NotFound("User not found!");
+            if (request.Name.Contains('$'))
+                return BadRequest("Album name can't contain dollar sign!");
             foreach (var album in user.Albums)
             {
                 if (album.Name.Equals(request.Name))

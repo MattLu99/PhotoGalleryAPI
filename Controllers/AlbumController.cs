@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Castle.Core.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoGalleryAPI.Data;
 using PhotoGalleryAPI.Models.Data;
@@ -24,6 +25,14 @@ namespace PhotoGalleryAPI.Controllers
         public async Task<ActionResult<List<Album>>> GetAll()
         {
             return Ok(await _context.Albums.ToListAsync());
+        }
+
+        // GET: api/<AlbumController>/Count
+        [HttpGet("Count")]
+        [ProducesResponseType(typeof(int), 200)]
+        public async Task<ActionResult<int>> Count()
+        {
+            return Ok(await _context.Albums.CountAsync());
         }
 
         // GET: api/<AlbumController>/5
@@ -92,7 +101,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult> DeleteAlbum(Guid id)
+        public async Task<ActionResult> DeleteAlbum(string id)
         {
             var album = await _context.Albums.FindAsync(id);
             if (album == null)
@@ -101,6 +110,41 @@ namespace PhotoGalleryAPI.Controllers
             _context.Albums.Remove(album);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        // GET: api/<AlbumController>/5/CoverImage
+        [HttpGet("{id}/CoverImage")]
+        [ProducesResponseType(typeof(Photo), 200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<Photo>> GetCoverImage(string id)
+        {
+            var album = await _context.Albums.FindAsync(id);
+            if (album == null)
+                return NotFound("Album not found!");
+            if (album.CoverImageId.IsNullOrEmpty())
+                return Ok();
+            Photo photo = album.Photos.FindLast(p => p.Id.Equals(album.CoverImageId));
+            if (photo == null)
+                return NotFound("Photo not found!");
+            return Ok(photo);
+        }
+
+        // PUT: api/<AlbumController>/5/ChangeCoverImage
+        [HttpPut("{id}/ChangeCoverImage")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult> ChangeCoverImage(string id, string coverImageId)
+        {
+            var album = await _context.Albums.FindAsync(id);
+            if (album == null)
+                return NotFound("Album not found!");
+            Photo photo = album.Photos.FindLast(p => p.Id.Equals(coverImageId));
+            if (photo == null)
+                return NotFound("Photo not found!");
+            album.CoverImageId = photo.Id;
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }
