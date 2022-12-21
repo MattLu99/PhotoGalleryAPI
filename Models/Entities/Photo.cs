@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace PhotoGalleryAPI.Models.Data
+namespace PhotoGalleryAPI.Models.Entities
 {
     public class Photo
     {

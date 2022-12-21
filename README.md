@@ -1,5 +1,5 @@
 # PhotoGalleryAPI
-ASP.NET Core 6 backend for the PhotoGallery university project. It handles all data, including users, image's and everything that is needed for these to work.
+ASP.NET Core 6 backend for the PhotoGallery project. Using EntityFramework Core 6 it handles all the database management for the users, albums, and images.
 
 ## Useful commands
 
@@ -15,16 +15,18 @@ dotnet ef migrations add GalleryModels
 ## Models
 
 ### User
-Users are the main and most important data of this application. Anyone can register and become a user. Users can upload images make their own albums, to save their images and keep them for later viewing.
+Users are the main and most important data of this application. Anyone can register and become a user. Users can upload images, make their own albums and save their images to albums for later viewing.
 
 ### Album
 Albums store photos for the users. Albums know what user they belong to and also know their own "location" within the user's albums.
 
 ### Photo
-Photos are the representation of a single image with all its necessery data. In a nvarchar(max) it stores the image data as a base64 string, which in MSSQL is capable of storing up to 2GB's of data.
+Photos are the representation of a single image with all its necessery data. It stores the image data as a base64 string in a nvarchar(max), which in MSSQL is capable of storing up to 2GBs of data.
 
 ## Links
-- [Create README](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops)
+- [ASP.NET Core 6](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0)
 
 ## ToDo:
-- Minor fix: [make lazy loader not show in any Json output](https://stackoverflow.com/questions/25749509/how-can-i-tell-json-net-to-ignore-properties-in-a-3rd-party-object)
+- Feature: user/album statistics
+- Feature: update/edit entities
+- Feature: production version

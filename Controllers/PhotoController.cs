@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoGalleryAPI.Data;
-using PhotoGalleryAPI.Models.Data;
+using PhotoGalleryAPI.Models.Entities;
 
 namespace PhotoGalleryAPI.Controllers
 {

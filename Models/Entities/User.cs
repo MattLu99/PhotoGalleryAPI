@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace PhotoGalleryAPI.Models.Data
+namespace PhotoGalleryAPI.Models.Entities
 {
     public class User
     {
@@ -13,8 +13,10 @@ namespace PhotoGalleryAPI.Models.Data
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public byte[] PasswordHash { get; set; }
 
+        [JsonIgnore]
         public byte[] PasswordSalt { get; set; }
 
         [JsonIgnore]
