@@ -21,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<PhotoGalleryDbContext>(options =>
                     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAlbumService, AlbumService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

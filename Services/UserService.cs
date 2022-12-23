@@ -109,7 +109,7 @@ namespace PhotoGalleryAPI.Services
             var user = await _ctx.Users.FindAsync(id);
             if (user == null)
                 return;
-            _ctx.Remove(user);
+            _ctx.Users.Remove(user);
             await _ctx.SaveChangesAsync();
         }
     }

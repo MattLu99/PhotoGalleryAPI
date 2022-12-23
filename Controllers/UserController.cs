@@ -64,7 +64,7 @@ namespace PhotoGalleryAPI.Controllers
         [HttpGet("{id}/AlbumsByLocation/{location}")]
         [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<List<Album>>> GetAlbumsByLocation(string id, string location)
+        public async Task<ActionResult<List<Album>>> GetUserAlbumsByLocation(string id, string location)
         {
             var user = await _context.FindUserByIdAsync(id);
             if (user == null)
