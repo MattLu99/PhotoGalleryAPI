@@ -22,14 +22,12 @@ namespace PhotoGalleryAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Album", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.Album", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CoverImageId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -61,10 +59,9 @@ namespace PhotoGalleryAPI.Migrations
                     b.ToTable("Albums");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Photo", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.Photo", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AlbumId")
@@ -102,10 +99,9 @@ namespace PhotoGalleryAPI.Migrations
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.User", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.User", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastLoginAt")
@@ -132,9 +128,9 @@ namespace PhotoGalleryAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Album", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.Album", b =>
                 {
-                    b.HasOne("PhotoGalleryAPI.Models.Data.User", "User")
+                    b.HasOne("PhotoGalleryAPI.Models.Entities.User", "User")
                         .WithMany("Albums")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -143,9 +139,9 @@ namespace PhotoGalleryAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Photo", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.Photo", b =>
                 {
-                    b.HasOne("PhotoGalleryAPI.Models.Data.Album", "Album")
+                    b.HasOne("PhotoGalleryAPI.Models.Entities.Album", "Album")
                         .WithMany("Photos")
                         .HasForeignKey("AlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -154,12 +150,12 @@ namespace PhotoGalleryAPI.Migrations
                     b.Navigation("Album");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.Album", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.Album", b =>
                 {
                     b.Navigation("Photos");
                 });
 
-            modelBuilder.Entity("PhotoGalleryAPI.Models.Data.User", b =>
+            modelBuilder.Entity("PhotoGalleryAPI.Models.Entities.User", b =>
                 {
                     b.Navigation("Albums");
                 });

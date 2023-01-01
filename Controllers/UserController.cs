@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PhotoGalleryAPI.Data;
-using PhotoGalleryAPI.Models.Data;
-using PhotoGalleryAPI.Models.Dto;
+using PhotoGalleryAPI.Models.Entities;
+using PhotoGalleryAPI.Models.Dtos;
 using PhotoGalleryAPI.Services;
 using System.Linq;
 
@@ -12,13 +11,11 @@ namespace PhotoGalleryAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly PhotoGalleryDbContext _context;
-        private readonly IAuthService _authService;
+        private readonly IUserService _context;
 
-        public UserController(PhotoGalleryDbContext context, IAuthService authService)
+        public UserController(IUserService context)
         {
             _context = context;
-            _authService = authService;
         }
 
         // GET: api/<UserController>
@@ -26,7 +23,7 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<User>), 200)]
         public async Task<ActionResult<List<User>>> GetAll()
         {
-            return Ok(await _context.Users.ToListAsync());
+            return Ok(await _context.GetUsersAsync());
         }
 
         // GET: api/<UserController>/Count
@@ -34,42 +31,42 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(typeof(int), 200)]
         public async Task<ActionResult<int>> Count()
         {
-            return Ok(await _context.Users.CountAsync());
+            return Ok(await _context.CountUsersAsync());
         }
 
-        // GET: api/<UserController>/5
+        // GET: api/<UserController>/...
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<User>> GetUserById(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.FindUserByIdAsync(id);
             if (user == null)
                 return NotFound("User not found!");
 
             return Ok(user);
         }
 
-        // GET: api/<UserController>/5/Albums
+        // GET: api/<UserController>/.../Albums
         [HttpGet("{id}/Albums")]
         [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<List<Album>>> GetUserAlbums(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.FindUserByIdAsync(id);
             if (user == null)
                 return NotFound("User not found!");
             List<Album> albums = user.Albums;
             return Ok(albums);
         }
 
-        // GET: api/<UserController>/5/AlbumsByLocation/#root
+        // GET: api/<UserController>/.../AlbumsByLocation/...
         [HttpGet("{id}/AlbumsByLocation/{location}")]
         [ProducesResponseType(typeof(IEnumerable<Album>), 200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<List<Album>>> GetAlbumsByLocation(string id, string location)
+        public async Task<ActionResult<List<Album>>> GetUserAlbumsByLocation(string id, string location)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.FindUserByIdAsync(id);
             if (user == null)
                 return NotFound("User not found!");
             List<Album> albums = user.Albums.FindAll(a => a.ParentName.Equals(location));
@@ -82,104 +79,62 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<List<User>>> Register(UserDto request)
         {
-            foreach (var user in _context.Users)
-            {
-                if (user.Name.Equals(request.Name))
-                    return BadRequest("Username is taken!");
-            }
+            var user = await _context.FindUserByNameAsync(request.Name);
+            if (user != null)
+                return BadRequest("Username is taken!");
+            var newUser = await _context.CreateNewUserAsync(request);
 
-            _authService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-            var newUser = new User()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = request.Name,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                LastLoginAt = DateTime.UtcNow,
-                RegisteredAt = DateTime.UtcNow
-            };
-
-            var newAlbum = new Album()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "First Album",
-                User = newUser,
-                UserId = newUser.Id,
-                ParentName = "$root",
-                Description = $"First album of {newUser.Name}.",
-                CreatedAt = DateTime.UtcNow
-            };
-            newUser.Albums.Add(newAlbum);
-
-            _context.Users.Add(newUser);
-            _context.Albums.Add(newAlbum);
-            await _context.SaveChangesAsync();
             return Created("api/User/" + newUser.Id, newUser);
         }
 
         // POST: api/<UserController>/Login
         [HttpPost("Login")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(User), 200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<User>> Login(UserDto request)
         {
-            var user = await _context.Users.Where(user => user.Name.Equals(request.Name)).FirstOrDefaultAsync();
-            if (user == default)
+            var user = await _context.FindUserByNameAsync(request.Name);
+            if (user == null)
                 return BadRequest("Bad username!");
-            if (!_authService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            if (!_context.VerifyUserPassword(request.Password, user))
                 return BadRequest("Bad password!");
 
             user.LastLoginAt = DateTime.UtcNow;
-            //string token = _authService.CreateToken(user.Name);
+
             return Ok(user);
         }
 
-        // POST: api/<UserController>/5/NewAlbum
+        // POST: api/<UserController>/.../NewAlbum
         [HttpPost("{id}/NewAlbum")]
-        [ProducesResponseType(typeof(User), 201)]
+        [ProducesResponseType(typeof(Album), 201)]
+        [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<Album>> NewAlbum(string id, AlbumDto request)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.FindUserByIdAsync(id);
             if (user == null)
                 return NotFound("User not found!");
             if (request.Name.Contains('$'))
                 return BadRequest("Album name can't contain dollar sign!");
             foreach (var album in user.Albums)
-            {
                 if (album.Name.Equals(request.Name))
                     return BadRequest("Album name is taken!");
-            }
 
-            var newAlbum = new Album()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = request.Name,
-                User = user,
-                UserId = id,
-                ParentName = request.ParentName,
-                Description = request.Description,
-                CreatedAt = DateTime.UtcNow
-            };
-            user.Albums.Add(newAlbum);
-
-            _context.Albums.Add(newAlbum);
-            await _context.SaveChangesAsync();
+            var newAlbum = await _context.CreateNewAlbumForUserAsync(user, request);
             return Created("api/Album/" + newAlbum.Id, newAlbum);
         }
 
-        // DELETE api/<UserController>/5
+        // DELETE api/<UserController>/...
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<ActionResult> DeleteUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.FindUserByIdAsync(id);
             if (user == null)
                 return NotFound("User not found!");
+            await _context.DeleteUserByIdAsync(id);
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
             return NoContent();
         }
     }

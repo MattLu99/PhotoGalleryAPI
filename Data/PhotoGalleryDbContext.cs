@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using PhotoGalleryAPI.Models.Data;
+using PhotoGalleryAPI.Models.Entities;
 
 namespace PhotoGalleryAPI.Data
 {

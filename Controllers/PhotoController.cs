@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoGalleryAPI.Data;
-using PhotoGalleryAPI.Models.Data;
+using PhotoGalleryAPI.Models.Entities;
+using PhotoGalleryAPI.Services;
 
 namespace PhotoGalleryAPI.Controllers
 {
@@ -9,9 +10,9 @@ namespace PhotoGalleryAPI.Controllers
     [ApiController]
     public class PhotoController : ControllerBase
     {
-        private readonly PhotoGalleryDbContext _context;
+        private readonly IPhotoService _context;
 
-        public PhotoController(PhotoGalleryDbContext context)
+        public PhotoController(IPhotoService context)
         {
             _context = context;
         }
@@ -21,7 +22,7 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(typeof(IEnumerable<Photo>), 200)]
         public async Task<ActionResult<List<Photo>>> GetAll()
         {
-            return Ok(await _context.Photos.ToListAsync());
+            return Ok(await _context.GetPhotosAsync());
         }
 
         // GET: api/<PhotoController>/Count
@@ -29,37 +30,33 @@ namespace PhotoGalleryAPI.Controllers
         [ProducesResponseType(typeof(int), 200)]
         public async Task<ActionResult<int>> Count()
         {
-            return Ok(await _context.Photos.CountAsync());
+            return Ok(await _context.CountPhotosAsync());
         }
 
-        // GET: api/<PhotoController>/5
+        // GET: api/<PhotoController>/...
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Photo>), 200)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<List<Photo>>> GetPhotoById(string id)
         {
-            var photo = await _context.Photos.FindAsync(id);
+            var photo = await _context.FindPhotoByIdAsync(id);
             if (photo == null)
                 return NotFound("Photo not found!");
 
             return Ok(photo);
         }
 
-        // DELETE api/<PhotoController>/5
+        // DELETE api/<PhotoController>/...
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task<ActionResult> DeletePhoto(string id)
         {
-            var photo = await _context.Photos.FindAsync(id);
+            var photo = await _context.FindPhotoByIdAsync(id);
             if (photo == null)
                 return NotFound("Photo not found!");
-            _context.Photos.Remove(photo);
 
-            var album = await _context.Albums.FindAsync(photo.AlbumId);
-            if (album.CoverImageId.Equals(photo.Id))
-                album.CoverImageId = "";
-            await _context.SaveChangesAsync();
+            await _context.DeletePhotoByIdAsync(id);
             return NoContent();
         }
     }

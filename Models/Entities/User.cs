@@ -2,20 +2,21 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace PhotoGalleryAPI.Models.Data
+namespace PhotoGalleryAPI.Models.Entities
 {
     public class User
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
-        public byte[] PasswordHash { get; set; }
+        [JsonIgnore]
+        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
 
-        public byte[] PasswordSalt { get; set; }
+        [JsonIgnore]
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
 
         [JsonIgnore]
         public virtual List<Album> Albums { get; set; } = new List<Album>();
