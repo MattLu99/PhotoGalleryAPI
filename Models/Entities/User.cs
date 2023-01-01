@@ -6,18 +6,17 @@ namespace PhotoGalleryAPI.Models.Entities
 {
     public class User
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
 
         [JsonIgnore]
-        public byte[] PasswordSalt { get; set; }
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
 
         [JsonIgnore]
         public virtual List<Album> Albums { get; set; } = new List<Album>();

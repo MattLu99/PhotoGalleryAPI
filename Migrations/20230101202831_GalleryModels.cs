@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PhotoGalleryAPI.Migrations
 {
-    public partial class GalleryTables : Migration
+    public partial class GalleryModels : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,7 +34,7 @@ namespace PhotoGalleryAPI.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ParentName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    CoverImageId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CoverImageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>

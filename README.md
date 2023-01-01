@@ -1,5 +1,7 @@
 # PhotoGalleryAPI
-ASP.NET Core 6 backend for the PhotoGallery project. Using EntityFramework Core 6 it handles all the database management for the users, albums, and images.
+The backend of an Angular + ASP.NET Core web app project. Started as a university project, but then overtime worked more and more on it to learn about Fullstack development.
+The backend uses ASP.NET Core for the API features and Entity Framework Core for database management.
+Frontend of the project: https://github.com/MattLu99/PhotoGallery
 
 ## Useful commands
 
@@ -10,7 +12,8 @@ dotnet run PhotoGallery.dll
 ### Erase DB+Migration and start again:
 dotnet ef database update 0<br/>
 dotnet ef migrations remove<br/>
-dotnet ef migrations add GalleryModels
+dotnet ef migrations add GalleryModels<br/>
+dotnet ef --help
 
 ## Models
 
@@ -27,6 +30,10 @@ Photos are the representation of a single image with all its necessery data. It 
 - [ASP.NET Core 6](https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-6.0)
 
 ## ToDo:
-- Feature: user/album statistics
-- Feature: update/edit entities
+- Update: update project to .NET 7
+- Feature: complete user statistics with albums and photos
+- Feature: make a seeder that can fill the database with some default data in development mode
 - Feature: production version
+- Fix: move all data validation and handling into the services
+- Fix: make the endpoints only receive and awnser with DTOs
+- Fix: have the services properly respond with their status, and have the endpoints give proper response values based on failure.

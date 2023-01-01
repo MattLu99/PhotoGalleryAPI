@@ -6,17 +6,16 @@ namespace PhotoGalleryAPI.Models.Entities
 {
     public class Photo
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
         [JsonIgnore]
-        public virtual Album Album { get; set; }
+        public virtual Album Album { get; set; } = new Album();
 
-        public string AlbumId { get; set; }
+        public string AlbumId { get; set; } = string.Empty;
 
         [StringLength(250)]
         public string Description { get; set; } = string.Empty;
@@ -26,7 +25,7 @@ namespace PhotoGalleryAPI.Models.Entities
         public string TakenAtLocation { get; set; } = string.Empty;
 
         [MaxLength]
-        public string ImageData { get; set; }
+        public string ImageData { get; set; } = string.Empty;
 
         public DateTime UploadedAt { get; set; }
     }

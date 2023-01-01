@@ -46,7 +46,7 @@ namespace PhotoGalleryAPI.Services
             return computedHash.SequenceEqual(user.PasswordHash);
         }
 
-        public void CreatePasswordHash(string password, out byte[] passwordSalt, out byte[] passwordHash)
+        private void CreatePasswordHash(string password, out byte[] passwordSalt, out byte[] passwordHash)
         {
             using var hmac = new HMACSHA512();
             passwordSalt = hmac.Key;
@@ -66,19 +66,7 @@ namespace PhotoGalleryAPI.Services
                 LastLoginAt = DateTime.UtcNow,
                 RegisteredAt = DateTime.UtcNow
             };
-            var newAlbum = new Album()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "First Album",
-                User = newUser,
-                UserId = newUser.Id,
-                ParentName = "$root",
-                Description = $"First album of {newUser.Name}.",
-                CreatedAt = DateTime.UtcNow
-            };
-            newUser.Albums.Add(newAlbum);
             _ctx.Users.Add(newUser);
-            _ctx.Albums.Add(newAlbum);
 
             await _ctx.SaveChangesAsync();
 
